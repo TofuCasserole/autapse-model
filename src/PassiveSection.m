@@ -16,6 +16,12 @@ classdef PassiveSection < NeuronSection
     end
     
     methods
+        function obj = PassiveSection(C_m, g_Cl, E_Cl)
+            obj.C_m = C_m;
+            obj.g_Cl = g_Cl;
+            obj.E_Cl = E_Cl;
+        end
+        
         function sDot = dyn(s, input)
             sDot = 1/this.C_m * (input - this.g_Cl(s - this.E_Cl));
         end

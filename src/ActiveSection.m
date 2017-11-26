@@ -26,6 +26,16 @@ classdef ActiveSection < NeuronSection
     end
     
     methods
+        function obj = ActiveSection(C_m, g_Na, g_K, g_Cl, E_Na, E_K, E_Cl)
+            obj.C_m = C_m;
+            obj.g_Na = g_Na;
+            obj.g_K = g_K;
+            obj.g_Cl = g_Cl;
+            obj.E_Na = E_Na;
+            obj.E_K = E_K;
+            obj.E_Cl = E_Cl;
+        end
+        
         function sDot = dyn(s,input)
             V = s(1);
             h = s(2);
