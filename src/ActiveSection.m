@@ -1,6 +1,14 @@
 classdef ActiveSection < NeuronSection
-    %ACTIVESECTION Summary of this class goes here
-    %   Detailed explanation goes here
+    %ACTIVESECTION describes a section of neuron with active channels
+    %   given by the Hodgkin-Huxley model
+    %
+    %   C_m membrane capacitance
+    %   g_Na maximum sodium channel capacitance
+    %   g_K maximum potassium channel capacitance
+    %   g_Cl chloride channel conductance
+    %   E_Na nernst potential of sodium
+    %   E_K nernst potential of potassium
+    %   E_Cl nernst potential of chloride
     
     properties (Constant)
         stateArity = 4

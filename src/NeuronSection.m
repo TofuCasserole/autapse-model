@@ -1,6 +1,9 @@
 classdef (Abstract) NeuronSection < handle
-    %NEURONSECTION Summary of this class goes here
-    %   Detailed explanation goes here
+    %NEURONSECTION Abstract class describing a section of neuron
+    %   stateArity the number of dimensions of the state parameter
+    %   inputArity the number of dimensions of the input parameter
+    %   sDot = dyn(s,input) computes the time derivative of s given an
+    %   input
     
     properties
         stateArity

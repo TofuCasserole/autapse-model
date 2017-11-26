@@ -1,6 +1,8 @@
 classdef PassiveSection < NeuronSection
-    %PASSIVESECTION Summary of this class goes here
-    %   Detailed explanation goes here
+    %PASSIVESECTION Describes a section of passive cable
+    %   C_m membrane capacitance
+    %   g_Cl chloride channel conductance
+    %   E_Cl nernst potential of chloride
     
     properties (Constant)
         stateArity = 1
