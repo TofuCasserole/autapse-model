@@ -12,7 +12,7 @@ classdef PassiveSection < NeuronSection
     
     methods
         function obj = PassiveSection(C_m, g_Cl, E_Cl)
-            obj = obj@NeuronSection(1,1);
+            obj = obj@NeuronSection(1);
             
             obj.C_m = C_m;
             obj.g_Cl = g_Cl;

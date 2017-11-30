@@ -7,13 +7,11 @@ classdef NeuronSection < handle
     
     properties
         stateArity
-        inputArity
     end
     
     methods
-        function obj = NeuronSection(stateArity,inputArity)
+        function obj = NeuronSection(stateArity)
             obj.stateArity = stateArity;
-            obj.inputArity = inputArity;
         end
     end
     
