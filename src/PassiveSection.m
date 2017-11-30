@@ -4,11 +4,6 @@ classdef PassiveSection < NeuronSection
     %   g_Cl chloride channel conductance
     %   E_Cl nernst potential of chloride
     
-    properties (Constant)
-        stateArity = 1
-        inputArity = 1
-    end
-    
     properties
         C_m
         g_Cl
@@ -17,13 +12,15 @@ classdef PassiveSection < NeuronSection
     
     methods
         function obj = PassiveSection(C_m, g_Cl, E_Cl)
+            obj = obj@NeuronSection(1,1);
+            
             obj.C_m = C_m;
             obj.g_Cl = g_Cl;
             obj.E_Cl = E_Cl;
         end
         
-        function sDot = dyn(s, input)
-            sDot = 1/this.C_m * (input - this.g_Cl(s - this.E_Cl));
+        function sDot = dyn(this, s, input)
+            sDot = 1/this.C_m * (input - this.g_Cl*(s - this.E_Cl));
         end
     end
     
