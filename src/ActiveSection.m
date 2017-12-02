@@ -22,7 +22,7 @@ classdef ActiveSection < NeuronSection
     
     methods
         function obj = ActiveSection(C_m, g_Na, g_K, g_Cl, E_Na, E_K, E_Cl)
-            obj = obj@NeuronSection(4,1);
+            obj = obj@NeuronSection(4);
             
             obj.C_m = C_m;
             obj.g_Na = g_Na;

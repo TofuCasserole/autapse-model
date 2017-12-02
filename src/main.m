@@ -28,25 +28,46 @@ dx = 4.5161e-4;
 surfAreaSoma = 4 * pi * rSoma^2;
 surfAreaSection = pi * r^2 * dx;
 crossArea = pi * r^2;
-C_m_soma = Cm * surfAreaSoma;
-g_Na_soma = gNa * surfAreaSoma;
-g_K_soma = gK * surfAreaSoma;
-g_Cl_soma = gCl * surfAreaSoma;
-C_m_section = Cm * surfAreaSection;
-g_Cl_section = gCl * surfAreaSection;
-g_i_section = gCy * crossArea / dx;
-g_i_soma = 2/3 * gCy * pi * rSoma^3;
+C_m_s = Cm * surfAreaSoma;
+g_Na_s = gNa * surfAreaSoma;
+g_K_s = gK * surfAreaSoma;
+g_Cl_s = gCl * surfAreaSoma;
+C_m_n = Cm * surfAreaSection;
+g_Cl_n = gCl * surfAreaSection;
+g_i_n = gCy * crossArea / dx;
+g_i_s = 2/3 * gCy * pi * rSoma^3;
 
-section = PassiveSection(C_m_section,g_Cl_section,E_Cl);
-soma = ActiveSection(C_m_soma,g_Na_soma,g_K_soma,g_Cl_soma,...
-                            E_Na,E_K,E_Cl);
+section = PassiveSection(C_m_n,g_Cl_n,E_Cl);
+soma = ActiveSection(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl);
                         
-[t,s] = ode15s(@(t,s) isoActive.dyn(s,istim(t)),[0 5], [V0; h0; m0; n0]);
-plot(t,s);
+sec = {section, section, section, section};
+weights = g_i_n*ones(1,3);
+A = diag(weights,1) + diag(weights,-1);
+ 
+cGraph = graph(A);
+
+s0 = V0 * ones(4,1);
+
+inputVec = [1;0;0;0];
+neuron = FiniteElementNeuron(cGraph,sec,@(t) istim(t)*inputVec);
+
+[t,s] = ode15s(@neuron.dyn, [0 0.1], s0); 
+
+mesh(1:4,t,s(:,1:4));
 
 function I = istim(t)
-    if (t > 1 && t < 2)
-        I = 0.8e-9;
+    % input current params
+    epsilon = 1e-6;
+    tstart = 0;
+    tstop = 3e-3;
+    IAmp = 12e-9;
+
+    if (t >= tstart - epsilon && t < tstart)
+        I = (IAmp/epsilon)*t + IAmp - (IAmp*tstart)/epsilon;
+    elseif (t >= tstart && t <= tstop)
+        I = IAmp;
+    elseif (t > tstop && t <= tstop + epsilon)
+        I = -(IAmp/epsilon)*t + IAmp + (IAmp*tstop)/epsilon;
     else
         I = 0;
     end
