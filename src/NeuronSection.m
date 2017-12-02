@@ -16,7 +16,7 @@ classdef NeuronSection < handle
     end
     
     methods (Abstract)
-        sDot = dyn(this,s,i)
+        sDot = dyn(this,t,s,i)
     end
     
 end

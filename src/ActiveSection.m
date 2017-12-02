@@ -33,7 +33,7 @@ classdef ActiveSection < NeuronSection
             obj.E_Cl = E_Cl;
         end
         
-        function sDot = dyn(this, s, input)
+        function sDot = dyn(this, ~, s, input)
             V = s(1);
             h = s(2);
             m = s(3);
