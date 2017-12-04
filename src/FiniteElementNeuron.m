@@ -37,7 +37,6 @@ classdef FiniteElementNeuron
                 end
                 obj.A_in = vertcat(obj.A_in, rowvec);
             end
-            disp(obj.A_in);
         end
         
         function sDot = dyn(this, t, s)
