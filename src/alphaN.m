@@ -1,7 +1,7 @@
 function an = alphaN(v)
 %ALPHAN Summary of this function goes here
 %   Detailed explanation goes here
-    v = vrate(v);
-    an = 0.01*(10-v)./(exp((10-v)/10)-1); 
+    v = v*1e3;
+    an = 0.01*(v+55)./(1-exp((v+55)/-10));
 end
 
