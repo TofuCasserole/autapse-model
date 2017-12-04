@@ -23,14 +23,12 @@ classdef Synapse < NeuronSection
         end
         
         function sDot = dyn(this,t,s,i)
-            sDot = 1/this.C_m * (i - this.gSyn(t)*(s-this.E_syn)...
+            sDot = 1/this.C_m * (i - gSyn(t,this.g_peak,this.t_peak)*...
+                                    (s-this.E_syn)...
                                     - this.g_Cl*(s-this.E_Cl));
         end
         
-        function g = gSyn(this,t)
-            g = this.g_peak * exp(1) * t * exp(-t/this.t_peak)...
-                    / this.t_peak;
-        end
+        
     end
     
 end

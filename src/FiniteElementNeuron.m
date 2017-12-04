@@ -20,14 +20,14 @@ classdef FiniteElementNeuron
             
             obj.stateArity = 0;
             for i = 1:obj.N
-                obj.stateArity = obj.stateArity + sec{i}.stateArity;
+                obj.stateArity = obj.stateArity + sec(i).stateArity;
             end
             
             % construct input matrix
             for i = 1:obj.N
                 rowvec = [];
                 for j = 1:obj.N
-                    vp = zeros(1,sec{j}.stateArity);
+                    vp = zeros(1,sec(j).stateArity);
                     if i == j
                         vp(1) = -sumInputWeights(cGraph,i);
                     else
@@ -42,14 +42,13 @@ classdef FiniteElementNeuron
         
         function sDot = dyn(this, t, s)
             input = (this.A_in * s) + this.f_in(t);
-            
             sDot = zeros(this.stateArity,1);
             iState = 1;
             i = 1;
             while i <= this.N
-                ns = this.sec{i}.stateArity;
+                ns = this.sec(i).stateArity;
                 sDot(iState:iState + ns - 1) = ...
-                        this.sec{i}.dyn(t, s(iState:iState + ns - 1),...
+                        this.sec(i).dyn(t, s(iState:iState + ns - 1),...
                                             input(i));
                 i = i + 1;
                 iState = iState + ns;
