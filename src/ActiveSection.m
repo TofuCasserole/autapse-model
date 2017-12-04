@@ -43,9 +43,9 @@ classdef ActiveSection < NeuronSection
                         (input - this.g_Na*m^3*h*(V-this.E_Na) ...
                                 - this.g_K*n^4*(V-this.E_K)...
                                 - this.g_Cl*(V-this.E_Cl));
-            hDot = (alphaH(V)*(1-h) - betaH(V)*h);
-            mDot = (alphaM(V)*(1-m) - betaM(V)*m);
-            nDot = (alphaN(V)*(1-n) - betaN(V)*n);
+            hDot = 4.5 * (alphaH(V)*(1-h) - betaH(V)*h);
+            mDot = 4.5 * (alphaM(V)*(1-m) - betaM(V)*m);
+            nDot = 4.5 * (alphaN(V)*(1-n) - betaN(V)*n);
             sDot = [vDot; hDot; mDot; nDot];
         end
     end

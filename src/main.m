@@ -46,10 +46,10 @@ g_i_s = (2/3 * gCy * pi * rSoma^2) + g_i_n/2;
 g_i_c = g_i_n/2;
 
 % Initial values
-v0 = -76.6e-3;
-n0 = 0.6092;
-m0 = 0.01253;
-h0 = 0;
+v0 = -76.3e-3;
+n0 = 0.7234;
+m0 = 0.0101;
+h0 = 0.8985;
 a0 = [v0;h0;m0;n0];
 
 % Finite Element Neuron Simulation
@@ -70,10 +70,12 @@ s0 = vertcat(nvertcat(v0,N_dend),a0,nvertcat(a0,N_axon));
 inputVec = vertcat(1,zeros(N-1,1));
 neur = FiniteElementNeuron(graph(A),sec,@(t) istim(t)*inputVec);
 
-[t,s] = ode15s(@(t,s) soma.dyn(t,s,1e-8), [0 0.01], a0);
+[t,s] = ode15s(@(t,s) soma.dyn(t,s,istim(t)), [0 0.01], a0);
 
 % v = voltages(s,sec);
 % mesh(1:N,t,v);
+
+plot(t,s);
 
 function v = voltages(s,sec)
     n = length(sec);
@@ -89,8 +91,8 @@ function I = istim(t)
     % input current params
     epsilon = 1e-6;
     tstart = 0;
-    tstop = 1e-4;
-    IAmp = 1e-7;
+    tstop = 1e-3;
+    IAmp = 1e-8;
 
     if (t >= tstart - epsilon && t < tstart)
         I = (IAmp/epsilon)*t + IAmp - (IAmp*tstart)/epsilon;
