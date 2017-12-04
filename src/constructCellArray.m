@@ -4,7 +4,7 @@ function arr = constructCellArray(obj,n)
 
     arr = {};
     for i = 1:n
-        arr = horzcat(obj,arr);
+        arr = horzcat({obj},arr);
     end
 
 end
