@@ -46,10 +46,16 @@ classdef FiniteElementNeuron
             i = 1;
             while i <= this.N
                 ns = this.sec{i}.stateArity;
+                section = this.sec{i};
+                if (i == 1)
+                    in_i = input(1:2);
+                    i = i + 2;
+                else
+                    in_i = input(i);
+                    i = i + 1;
+                end
                 sDot(iState:iState + ns - 1) = ...
-                        this.sec{i}.dyn(t, s(iState:iState + ns - 1),...
-                                            input(i));
-                i = i + 1;
+                        section.dyn(t, s(iState:iState + ns - 1), in_i);
                 iState = iState + ns;
             end
         end
