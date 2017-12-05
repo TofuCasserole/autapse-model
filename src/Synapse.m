@@ -22,7 +22,7 @@ classdef Synapse < NeuronSection
             obj.t_peak = t_peak;
         end
         
-        function sDot = dyn(this,t,s,i)
+        function sDot = dyn(this,t,s,~,i)
             sDot = 1/this.C_m * (i - gSyn(t,this.g_peak,this.t_peak)*...
                                     (s-this.E_syn)...
                                     - this.g_Cl*(s-this.E_Cl));
