@@ -26,7 +26,7 @@ classdef FitzHugh < NeuronSection
             obj.E_Cl = E_Cl;
         end
         
-        function sDot = dyn(this, ~, s, input)
+        function sDot = dyn(this, ~, s, ~, input)
             V = s(1);
             n = s(2);
             

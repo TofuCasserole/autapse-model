@@ -19,7 +19,7 @@ classdef Nagumo < NeuronSection
             obj.tau = tau;
         end
         
-        function sDot = dyn(this,~,s,input)
+        function sDot = dyn(this,~,s,~,input)
             v = s(1);
             w = s(2);
             vDot = v - v^3/3 - w + input;

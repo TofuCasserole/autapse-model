@@ -7,6 +7,9 @@
 ## We have git for backups!
 ##---------------------------------------------------
 
+# .mat files can get very big!
+*.mat
+
 # Windows default autosave extension
 *.asv
 

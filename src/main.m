@@ -9,8 +9,14 @@ gCl = 0.3e-3;
 gNa = 120e-3;
 gK = 36e-3;
 
-% from HW4
-gCy = 3.33e-3;
+gAut = 0.5e-3;
+E_aut = -2e-3;
+k = 8;
+theta = 0.25;
+tau = 6;
+
+% from Foster K.R., Bidinger J.M., & Carpenter D.O. (1976)
+gCy = 17.5e-3;
 
 % Preliminary neuron geometry parameters
 % from wikipedia (specify sources later)
@@ -31,6 +37,8 @@ g_Na_s = gNa * surfAreaSoma;
 g_K_s = gK * surfAreaSoma;
 g_Cl_s = gCl * surfAreaSoma;
 
+g_aut_s = gAut * crossArea;
+
 C_m_n = Cm * surfAreaSection;
 g_Cl_n = gCl * surfAreaSection;
 g_Na_n = gNa * surfAreaSection;
@@ -46,34 +54,17 @@ g_i_s = (2/3 * gCy * pi * rSoma^2) + g_i_n/2;
 g_i_c = g_i_n/2;
 
 % Initial values
-v0 = -76.6e-3;
-n0 = 0.6092;
-m0 = 0.01253;
-h0 = 0;
+v0 = -66.24e-3;
+n0 = 0.3430;
+m0 = 0.0650;
+h0 = 0.4798;
 a0 = [v0;h0;m0;n0];
 
 % Finite Element Neuron Simulation
-dend = PassiveSection(C_m_n,g_Cl_n,v0);
-soma = ActiveSection(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl);
-axon = ActiveSection(C_m_n,g_Na_n,g_K_n,g_Cl_n,E_Na,E_K,E_Cl);
+aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
-N_dend = 3;
-N_axon = 40;
-N = 1 + N_dend + N_axon;
-
-sec = horzcat(constructCellArray(dend,N_dend),...
-                 {soma}, constructCellArray(axon,N_axon));
-weights = horzcat(g_i_n*ones(1,N_dend-1),...
-                     g_i_s*ones(1,2), g_i_n*ones(1,N_axon-1));
-A = diag(weights,1) + diag(weights,-1);
-s0 = vertcat(nvertcat(v0,N_dend),a0,nvertcat(a0,N_axon));
-inputVec = vertcat(1,zeros(N-1,1));
-neur = FiniteElementNeuron(graph(A),sec,@(t) istim(t)*inputVec);
-
-[t,s] = ode15s(@(t,s) soma.dyn(t,s,1e-8), [0 0.01], a0);
-
-% v = voltages(s,sec);
-% mesh(1:N,t,v);
+sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,istim(t)),tau,@(t) a0,[0 100]);
+plot(sol.x,sol.y');
 
 function v = voltages(s,sec)
     n = length(sec);
@@ -87,10 +78,10 @@ end
 
 function I = istim(t)
     % input current params
-    epsilon = 1e-6;
+    epsilon = 0.1;
     tstart = 0;
-    tstop = 1e-4;
-    IAmp = 1e-7;
+    tstop = 999999;
+    IAmp = 0.5e-9;
 
     if (t >= tstart - epsilon && t < tstart)
         I = (IAmp/epsilon)*t + IAmp - (IAmp*tstart)/epsilon;
