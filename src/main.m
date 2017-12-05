@@ -9,8 +9,8 @@ gCl = 0.3e-3;
 gNa = 120e-3;
 gK = 36e-3;
 
-gAut = 0.5e-3;
-E_aut = -2e-3;
+gAut = 0.3e-3;
+E_aut = -40e-3;
 k = 8;
 theta = 0.25;
 tau = 6;
@@ -32,12 +32,13 @@ surfAreaSection = pi * r^2 * dx;
 surfAreaCap = 2 * pi * r^2;
 crossArea = pi * r^2;
 
-C_m_s = Cm * surfAreaSoma;
-g_Na_s = gNa * surfAreaSoma;
-g_K_s = gK * surfAreaSoma;
-g_Cl_s = gCl * surfAreaSoma;
+sectionArea = 6e-8; % cm^2
 
-g_aut_s = gAut * crossArea;
+C_m_s = Cm * sectionArea;
+g_Na_s = gNa * sectionArea;
+g_K_s = gK * sectionArea;
+g_Cl_s = gCl * sectionArea;
+g_aut_s = gAut * sectionArea;
 
 C_m_n = Cm * surfAreaSection;
 g_Cl_n = gCl * surfAreaSection;
@@ -54,7 +55,7 @@ g_i_s = (2/3 * gCy * pi * rSoma^2) + g_i_n/2;
 g_i_c = g_i_n/2;
 
 % Initial values
-v0 = -66.24e-3;
+v0 = -68e-3;
 n0 = 0.3430;
 m0 = 0.0650;
 h0 = 0.4798;
@@ -63,8 +64,8 @@ a0 = [v0;h0;m0;n0];
 % Finite Element Neuron Simulation
 aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
-sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,istim(t)),tau,@(t) a0,[0 100]);
-plot(sol.x,sol.y');
+sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,0.5e-9),tau,@(t) a0,[0 6]);
+plot(sol.x,sol.y(1,:));
 
 function v = voltages(s,sec)
     n = length(sec);
