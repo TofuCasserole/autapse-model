@@ -9,11 +9,9 @@ gCl = 0.3e-3;
 gNa = 120e-3;
 gK = 36e-3;
 
-gAut = 0.3e-3;
-E_aut = -40e-3;
+E_aut = -2e-3;
 k = 8;
 theta = 0.25;
-tau = 6;
 
 % from Foster K.R., Bidinger J.M., & Carpenter D.O. (1976)
 gCy = 17.5e-3;
@@ -34,11 +32,10 @@ crossArea = pi * r^2;
 
 sectionArea = 6e-8; % cm^2
 
-C_m_s = Cm * sectionArea;
-g_Na_s = gNa * sectionArea;
-g_K_s = gK * sectionArea;
-g_Cl_s = gCl * sectionArea;
-g_aut_s = gAut * sectionArea;
+C_m_s = Cm * surfAreaSoma;
+g_Na_s = gNa * surfAreaSoma;
+g_K_s = gK * surfAreaSoma;
+g_Cl_s = gCl * surfAreaSoma;
 
 C_m_n = Cm * surfAreaSection;
 g_Cl_n = gCl * surfAreaSection;
@@ -61,11 +58,21 @@ m0 = 0.0650;
 h0 = 0.4798;
 a0 = [v0;h0;m0;n0];
 
-% Finite Element Neuron Simulation
-aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
+nTau = 4;
+nG = 4;
+solutions = cell(nTau,nG);
+for tindex = 1:nTau
+    tau = 4*tindex + 4;
+    for gindex = 1:nG
+        gAut = (gindex-1)*2e-4;
+        g_aut_s = gAut * sectionArea;
+        aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
-sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,0.5e-9),tau,@(t) a0,[0 6]);
-plot(sol.x,sol.y(1,:));
+        sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,1e-10),tau,@(t) a0,[0 100]);
+        plot(sol.x,sol.y(1,:));
+        solutions{tindex,gindex} = sol;
+    end
+end
 
 function v = voltages(s,sec)
     n = length(sec);
@@ -81,7 +88,7 @@ function I = istim(t)
     % input current params
     epsilon = 0.1;
     tstart = 0;
-    tstop = 999999;
+    tstop = 30;
     IAmp = 0.5e-9;
 
     if (t >= tstart - epsilon && t < tstart)
