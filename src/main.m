@@ -32,10 +32,10 @@ crossArea = pi * r^2;
 
 sectionArea = 6e-8; % cm^2
 
-C_m_s = Cm * surfAreaSoma;
-g_Na_s = gNa * surfAreaSoma;
-g_K_s = gK * surfAreaSoma;
-g_Cl_s = gCl * surfAreaSoma;
+C_m_s = Cm * sectionArea;
+g_Na_s = gNa * sectionArea;
+g_K_s = gK * sectionArea;
+g_Cl_s = gCl * sectionArea;
 
 C_m_n = Cm * surfAreaSection;
 g_Cl_n = gCl * surfAreaSection;
@@ -58,18 +58,16 @@ m0 = 0.0650;
 h0 = 0.4798;
 a0 = [v0;h0;m0;n0];
 
-nTau = 4;
-nG = 4;
-solutions = cell(nTau,nG);
+nTau = 1;
+nG = 5;
 for tindex = 1:nTau
-    tau = 4*tindex + 4;
+    tau = 12;
     for gindex = 1:nG
-        gAut = (gindex-1)*2e-4;
+        gAut = (gindex-1)*2e-3;
         g_aut_s = gAut * sectionArea;
         aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
-        sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,1e-10),tau,@(t) a0,[0 100]);
-        plot(sol.x,sol.y(1,:));
+        sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,1e-12),tau,@(t) a0,[0 80]);
         solutions{tindex,gindex} = sol;
     end
 end
