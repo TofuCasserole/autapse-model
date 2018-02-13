@@ -58,9 +58,9 @@ m0 = 0.0650;
 h0 = 0.4798;
 a0 = [v0;h0;m0;n0];
 
-nTau = 2;
-nI = 2;
-tEnd = 80;
+nTau = 10;
+nI = 10;
+tEnd = 50;
 
 solutions = cell(nTau*nI,1);
 parfor i = 1:(nTau*nI)
@@ -68,10 +68,10 @@ parfor i = 1:(nTau*nI)
     iindex = ceil(i/nTau);
     
     gAut = 1e-3;
-    g_aut_s = q * sectionArea;
+    g_aut_s = gAut * sectionArea;
     
-    tau = tindex * 8;
-    Istim = iindex * 0.5e-12;
+    tau = tindex + 5;
+    Istim = iindex * 0.2e-12;
     aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
     sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,Istim),tau,@(t) a0,[0 tEnd]);
