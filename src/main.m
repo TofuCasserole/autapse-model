@@ -58,44 +58,22 @@ m0 = 0.0650;
 h0 = 0.4798;
 a0 = [v0;h0;m0;n0];
 
-nTau = 1;
-nG = 5;
-for tindex = 1:nTau
-    tau = 12;
-    for gindex = 1:nG
-        gAut = (gindex-1)*2e-3;
-        g_aut_s = gAut * sectionArea;
-        aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
+nTau = 2;
+nI = 2;
+tEnd = 80;
 
-        sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,1e-12),tau,@(t) a0,[0 80]);
-        solutions{tindex,gindex} = sol;
-    end
-end
+solutions = cell(nTau*nI,1);
+parfor i = 1:(nTau*nI)
+    tindex = mod(i,nTau) + 1;
+    iindex = ceil(i/nTau);
+    
+    gAut = 1e-3;
+    g_aut_s = q * sectionArea;
+    
+    tau = tindex * 8;
+    Istim = iindex * 0.5e-12;
+    aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
-function v = voltages(s,sec)
-    n = length(sec);
-    v = zeros(size(s,1),n);
-    index = 1;
-    for i = 1:n
-        v(:,i) = s(:,index);
-        index = index + sec{i}.stateArity; 
-    end
-end
-
-function I = istim(t)
-    % input current params
-    epsilon = 0.1;
-    tstart = 0;
-    tstop = 30;
-    IAmp = 0.5e-9;
-
-    if (t >= tstart - epsilon && t < tstart)
-        I = (IAmp/epsilon)*t + IAmp - (IAmp*tstart)/epsilon;
-    elseif (t >= tstart && t <= tstop)
-        I = IAmp;
-    elseif (t > tstop && t <= tstop + epsilon)
-        I = -(IAmp/epsilon)*t + IAmp + (IAmp*tstop)/epsilon;
-    else
-        I = 0;
-    end
+    sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,Istim),tau,@(t) a0,[0 tEnd]);
+    solutions{i} = sol;
 end
