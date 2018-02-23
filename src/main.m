@@ -31,15 +31,15 @@ h0 = 0.4798;
 a0 = [v0;h0;m0;n0];
 
 % simulation length (ms)
-t_end = 40;
+t_end = 50;
 
 % Batch processing parameters
-tau_init = 6;
-tau_step = 0;
-tau_n = 1;
+tau_init = 40;
+tau_step = -1.995;
+tau_n = 20;
 
-I_init = 0.1e-12;
-I_step = 0.1e-12;
+I_init = 0.01e-12;
+I_step = 0.0995e-12;
 I_n = 20;
 
 % run simulations in parallel
@@ -53,18 +53,20 @@ parfor i = 1:n_sim
     I_stim = (I_index * I_step) + I_init;
     aut = Autapse(C_m_s,g_Na_s,g_K_s,g_Cl_s,E_Na,E_K,E_Cl,g_aut_s,E_aut,k,theta);
 
-    sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,I_stim),tau,@(t) a0,[0 tEnd]);
+    sol = dde23(@(t,s,Z) aut.dyn(t,s,Z,I_stim),tau,@(t) a0,[0 t_end]);
     solutions{i} = sol;
 end
 
 solutionGrid = cell(tau_n, I_n);
-for i = 1:n_sim    
+for i = 1:n_sim
     tau_index = mod(tau_n-i,tau_n) + 1;
-    I_index = ceil((i-1)/tau_n);
+    I_index = floor((i-1)/tau_n) + 1;
     
     solutionGrid{tau_index, I_index} = solutions{i};
 end
 plotFiringRate(solutionGrid, tau_init, tau_step, I_init, I_step);
-filename = "solutions_" + string(tau_init) + "_" + string(tau_n)...
-    + "_" + string(I_init) + "_" + string(I_n);
+filename = "solutions_" + string(tau_init)...
+    + "_" + string((tau_n-1)*tau_step + tau_init)...
+    + "_" + string(I_init)...
+    + "_" + string((I_n-1)*I_step + I_init) + ".mat";
 save(filename, 'solutionGrid');
